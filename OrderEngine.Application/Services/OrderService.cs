@@ -2,6 +2,8 @@ using OrderEngine.Application.DTOs;
 using OrderEngine.Application.Interfaces;
 using OrderEngine.Domain.Entities;
 
+namespace OrderEngine.Application.Services;
+
 public class OrderService
 {
     private readonly IOrderRepository _repo;
@@ -31,24 +33,25 @@ public class OrderService
 
         return await _repo.CreateAsync(order);
     }
-    private static OrderResponseDto MapToResponse(Order order) => new()
-{
-    Id = order.Id,
-    CustomerId = order.CustomerId,
-    CustomerName = order.Customer.Name,
-    TotalAmount = order.TotalAmount,
-    DiscountAmount = order.DiscountAmount,
-    FinalAmount = order.FinalAmount,
-    CreatedAt = order.CreatedAt,
-    Items = order.Items.Select(i => new OrderItemDto
+
+    private static OrderEngine.Application.DTOs.OrderResponseDto MapToResponse(Order order) => new()
     {
-        Id = i.Id,
-        ProductName = i.ProductName,
-        Quantity = i.Quantity,
-        UnitPrice = i.UnitPrice,
-        TotalPrice = i.TotalPrice
-    }).ToList()
-};
+        Id = order.Id,
+        CustomerId = order.CustomerId,
+        CustomerName = order.Customer.Name,
+        TotalAmount = order.TotalAmount,
+        DiscountAmount = order.DiscountAmount,
+        FinalAmount = order.FinalAmount,
+        CreatedAt = order.CreatedAt,
+        Items = order.Items.Select(i => new OrderItemDto
+        {
+            Id = i.Id,
+            ProductName = i.ProductName,
+            Quantity = i.Quantity,
+            UnitPrice = i.UnitPrice,
+            TotalPrice = i.TotalPrice
+        }).ToList()
+    };
 
     private static Order MapToOrder(CreateOrderDto dto) => new()
     {

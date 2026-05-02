@@ -708,6 +708,16 @@
         "build": {
           "buildTransitive/netcoreapp3.1/_._": {}
         }
+      },
+      "OrderEngine.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/OrderEngine.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/OrderEngine.Domain.dll": {}
+        }
       }
     }
   },
@@ -1839,13 +1849,19 @@
         "system.composition.typedparts.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "OrderEngine.Domain/1.0.0": {
+      "type": "project",
+      "path": "../OrderEngine.Domain/OrderEngine.Domain.csproj",
+      "msbuildProject": "../OrderEngine.Domain/OrderEngine.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
       "Microsoft.EntityFrameworkCore >= 10.0.7",
       "Microsoft.EntityFrameworkCore.Tools >= 10.0.7",
-      "Npgsql.EntityFrameworkCore.PostgreSQL >= 10.0.1"
+      "Npgsql.EntityFrameworkCore.PostgreSQL >= 10.0.1",
+      "OrderEngine.Domain >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1873,7 +1889,11 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/home/phil/projects/OrderProcessingEngine/OrderEngine/OrderEngine.Domain/OrderEngine.Domain.csproj": {
+              "projectPath": "/home/phil/projects/OrderProcessingEngine/OrderEngine/OrderEngine.Domain/OrderEngine.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -3,6 +3,14 @@
   <ItemGroup>
     <ProjectReference Include="..\OrderEngine.Application\OrderEngine.Application.csproj" />
     <ProjectReference Include="..\OrderEngine.Domain\OrderEngine.Domain.csproj" />
+    <ProjectReference Include="..\OrderEngine.Infrastructure\OrderEngine.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>

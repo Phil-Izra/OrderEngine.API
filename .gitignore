@@ -6,6 +6,13 @@
 # dotenv files
 .env
 
+# Ignore real configs
+appsettings.Development.json
+appsettings.Production.json
+
+# Optional (stricter)
+appsettings.json
+
 # User-specific files
 *.rsuser
 *.suo

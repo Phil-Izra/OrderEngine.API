@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrderEngine.Application.DTOs;
 using OrderEngine.Application.Interfaces;
@@ -5,6 +6,7 @@ using OrderEngine.Application.Services;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class OrdersController : ControllerBase
 {
     private readonly OrderService _orderService;

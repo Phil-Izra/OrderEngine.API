@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OrderEngine.Domain\OrderEngine.Domain.csproj" />
+    <ProjectReference Include="..\OrderEngine.Application\OrderEngine.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,8 +8,30 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add after AddControllers()
+
 var jwt = builder.Configuration.GetSection("JwtSettings");
+var jwtSecret = jwt["SecretKey"];
+var jwtIssuer = jwt["Issuer"];
+var jwtAudience = jwt["Audience"];
+
+if (!jwt.Exists())
+{
+    throw new InvalidOperationException(
+        "JwtSettings section is missing. Ensure JwtSettings is present in appsettings.json, appsettings.{Environment}.json, or your environment variables.");
+}
+
+if (string.IsNullOrWhiteSpace(jwtSecret))
+{
+    throw new InvalidOperationException(
+        "JwtSettings:SecretKey is missing or empty. Check appsettings.json, environment-specific appsettings, or JwtSettings__SecretKey environment variable.");
+}
+
+if (string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
+{
+    throw new InvalidOperationException(
+        "JwtSettings:Issuer and JwtSettings:Audience must be configured. Check appsettings.json, environment-specific appsettings, or environment variables.");
+}
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
@@ -27,13 +49,14 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwt["Issuer"],
-        ValidAudience = jwt["Audience"],
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(
-        Encoding.UTF8.GetBytes(jwt["SecretKey"]!)),
+        Encoding.UTF8.GetBytes(jwtSecret!)),
         ClockSkew = TimeSpan.Zero
     };
 });
+
 // Controllers + Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -65,12 +88,22 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Static files for photo serving
 app.UseStaticFiles();
 
-app.UseCors("AllowReact");
+// app.UseCors("AllowReact");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

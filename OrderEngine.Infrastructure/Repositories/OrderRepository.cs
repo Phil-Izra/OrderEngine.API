@@ -36,4 +36,20 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Customer)
             .ToListAsync();
     }
+
+    public async Task UpdateAsync(Order order)
+    {
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var order = await _context.Orders.FindAsync(id);
+        if (order is not null)
+        {
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

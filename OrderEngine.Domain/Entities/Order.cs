@@ -1,3 +1,5 @@
+using OrderEngine.Domain.Enums;
+
 namespace OrderEngine.Domain.Entities;
 public class Order
 {
@@ -9,4 +11,5 @@ public class Order
     public decimal DiscountAmount { get; set; }
     public decimal FinalAmount { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public OrderStatus Status { get; set; } = OrderStatus.Pending;
 }

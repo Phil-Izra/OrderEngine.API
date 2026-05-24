@@ -83,7 +83,7 @@ builder.Services.AddScoped<IDiscountStrategy, PercentageDiscountStrategy>(_ =>
     new PercentageDiscountStrategy(10));
 builder.Services.AddScoped<IDiscountStrategy, BulkOrderDiscountStrategy>();
 builder.Services.AddScoped<IDiscountStrategy, PremiumCustomerDiscountStrategy>();
-builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
@@ -103,7 +103,7 @@ var app = builder.Build();
 // Static files for photo serving
 app.UseStaticFiles();
 
-// app.UseCors("AllowReact");
+app.UseCors("AllowReact");
 app.UseSwagger();
 app.UseSwaggerUI();
 // app.UseHttpsRedirection();

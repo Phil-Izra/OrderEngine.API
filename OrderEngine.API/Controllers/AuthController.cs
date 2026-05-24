@@ -29,6 +29,13 @@ public class AuthController : ControllerBase
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
         _db.Users.Add(user);
+        _db.Customers.Add(new Customer
+        {
+            Id = user.Id,
+            Name = dto.FullName,
+            Email = dto.Email,
+            IsPremium = false
+        });
         await _db.SaveChangesAsync();
         var token = _tokenService.GenerateToken(user);
         return Ok(new AuthResponseDto(token, user.FullName,
@@ -52,8 +59,9 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UploadPhoto(IFormFile photo)
     {
-        var userId = Guid.Parse(User.FindFirst(
-        ClaimTypes.NameIdentifier)!.Value);
+        var userId = Guid.Parse(
+            User.FindFirst("sub")?.Value
+            ?? User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var user = await _db.Users.FindAsync(userId);
         if (user is null) return NotFound();
         var uploads = Path.Combine("wwwroot", "photos");

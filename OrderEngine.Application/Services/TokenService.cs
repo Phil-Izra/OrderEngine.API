@@ -15,10 +15,10 @@ public class TokenService
         Encoding.UTF8.GetBytes(jwt["SecretKey"]!));
         var claims = new[]
         {
-new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-new Claim(ClaimTypes.Email, user.Email),
-new Claim(ClaimTypes.Name, user.FullName),
-};
+            new Claim("sub", user.Id.ToString()),
+            new Claim("email", user.Email),
+            new Claim("name", user.FullName),
+        };
         var token = new JwtSecurityToken(
         issuer: jwt["Issuer"],
         audience: jwt["Audience"],

@@ -18,3 +18,8 @@ public class UpdateStatusDto
 {
     public OrderStatus Status { get; set; }
 }
+
+public class UpdateOrderDto
+{
+    public List<CreateOrderItemDto> Items { get; set; } = [];
+}

@@ -8,5 +8,6 @@ public interface IOrderService
     Task<IEnumerable<OrderDto>> GetAllAsync();
     Task<OrderDto> CreateAsync(CreateOrderDto dto);
     Task<OrderDto> UpdateStatusAsync(Guid id, OrderStatus status);
+    Task<OrderDto> UpdateOrderAsync(Guid id, UpdateOrderDto dto);
     Task DeleteAsync(Guid id);
 }

@@ -9,6 +9,7 @@ namespace OrderEngine.Application.Services;
 
 public class OrderService(
     IOrderRepository repository,
+    IEnumerable<IDiscountStrategy> discountStrategies,
     ILogger<OrderService> logger) : IOrderService
 {
 
@@ -51,8 +52,19 @@ public class OrderService(
 
         order = await repository.CreateAsync(order);
 
-        logger.LogInformation("Order {OrderId} created, total {TotalAmount}",
-            order.Id, order.TotalAmount);
+        // Reload with Customer navigation property so strategies can check IsPremium
+        order = await repository.GetByIdAsync(order.Id) ?? order;
+
+        var discountAmount = discountStrategies
+            .Where(s => s.IsApplicable(order))
+            .Sum(s => s.ApplyDiscount(order));
+
+        order.DiscountAmount = discountAmount;
+        order.FinalAmount = Math.Max(0, totalAmount - discountAmount);
+        await repository.UpdateAsync(order);
+
+        logger.LogInformation("Order {OrderId} created, total {TotalAmount}, discount {DiscountAmount}",
+            order.Id, order.TotalAmount, order.DiscountAmount);
 
         return MapToDto(order);
     }
@@ -68,6 +80,37 @@ public class OrderService(
         order.Status = status;
 
         await repository.UpdateAsync(order);
+        return MapToDto(order);
+    }
+
+    public async Task<OrderDto> UpdateOrderAsync(Guid id, UpdateOrderDto dto)
+    {
+        var order = await repository.GetByIdAsync(id)
+            ?? throw new NotFoundException($"Order {id} not found");
+
+        var newItems = dto.Items.Select(i => new OrderItem
+        {
+            OrderId = order.Id,
+            ProductName = i.ProductName,
+            Quantity = i.Quantity,
+            UnitPrice = i.UnitPrice
+        }).ToList();
+
+        var totalAmount = newItems.Sum(i => i.UnitPrice * i.Quantity);
+        order.TotalAmount = totalAmount;
+        order.Items = newItems;
+
+        var discountAmount = discountStrategies
+            .Where(s => s.IsApplicable(order))
+            .Sum(s => s.ApplyDiscount(order));
+
+        order.DiscountAmount = discountAmount;
+        order.FinalAmount = Math.Max(0, totalAmount - discountAmount);
+
+        logger.LogInformation("Order {OrderId} updated, total {TotalAmount}, discount {DiscountAmount}",
+            order.Id, order.TotalAmount, order.DiscountAmount);
+
+        await repository.ReplaceItemsAsync(order, newItems);
         return MapToDto(order);
     }
 

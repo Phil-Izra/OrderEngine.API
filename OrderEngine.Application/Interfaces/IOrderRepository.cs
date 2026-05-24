@@ -7,5 +7,6 @@ public interface IOrderRepository
     Task<Order?> GetByIdAsync(Guid id);
     Task<List<Order>> GetAllAsync();
     Task UpdateAsync(Order order);
+    Task ReplaceItemsAsync(Order order, IList<OrderItem> newItems);
     Task DeleteAsync(Guid id);
 }

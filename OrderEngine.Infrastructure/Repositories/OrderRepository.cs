@@ -39,6 +39,19 @@ public class OrderRepository : IOrderRepository
 
     public async Task UpdateAsync(Order order)
     {
+        if (_context.Entry(order).State == EntityState.Detached)
+            _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ReplaceItemsAsync(Order order, IList<OrderItem> newItems)
+    {
+        await _context.OrderItems
+            .Where(i => i.OrderId == order.Id)
+            .ExecuteDeleteAsync();
+
+        await _context.OrderItems.AddRangeAsync(newItems);
+
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
     }

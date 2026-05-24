@@ -35,6 +35,13 @@ public class OrdersController(IOrderService orderService,
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] UpdateOrderDto dto)
+    {
+        var order = await orderService.UpdateOrderAsync(id, dto);
+        return Ok(order);
+    }
+
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateStatus(
         Guid id, [FromBody] UpdateStatusDto dto)
